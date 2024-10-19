@@ -1,0 +1,39 @@
+{
+  "name": "parse-server-openapi",
+  "version": "1.0.0",
+  "description": "This package generate openapi specification for parse server and render using a provider like swagger, scaler, and more.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc",
+    "dev": "nodemon src/index.ts"
+  },
+  "keywords": [
+    "parse-server",
+    "swagger",
+    "scaler",
+    "openapi"
+  ],
+  "author": {
+    "name": "Besmillah Ibrahimi",
+    "email": "besmillah@ibrahimi.info",
+    "url": "https://ibrahimi.info"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.5.4",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.0.0",
+    "commander": "^12.1.0",
+    "express": "^4.19.2",
+    "node-fetch": "^3.3.2",
+    "openapi-types": "^12.1.3"
+  }
+}
