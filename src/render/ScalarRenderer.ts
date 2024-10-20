@@ -1,5 +1,4 @@
-import { OpenAPIContext } from "../core/OpenAPIApp";
-import { OpenAPIRenderer } from "./render";
+import { OpenAPIContext, OpenAPIRenderer } from "../types/types";
 
 export default class ScalarRenderer extends OpenAPIRenderer {
   render(ctx: OpenAPIContext): string {
@@ -9,8 +8,8 @@ export default class ScalarRenderer extends OpenAPIRenderer {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="${ctx.document.info.description}" />
-    <title>${ctx.document.info.title}</title>
+    <meta name="description" content="${ctx.document?.info?.description}" />
+    <title>${ctx.document?.info?.title}</title>
     <style>
       body {
         margin: 0;

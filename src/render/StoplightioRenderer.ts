@@ -1,6 +1,5 @@
-import { OpenAPIContext } from "../core/OpenAPIApp";
 import { objectToAttr } from "../openapi.util";
-import { OpenAPIRenderer } from "./render";
+import { OpenAPIContext, OpenAPIRenderer } from "../types/types";
 
 export default class StoplightioRenderer extends OpenAPIRenderer {
   render(ctx: OpenAPIContext): string {
@@ -10,8 +9,8 @@ export default class StoplightioRenderer extends OpenAPIRenderer {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="${ctx.document.info.description}" />
-    <title>${ctx.document.info.title}</title>
+    <meta name="description" content="${ctx.document?.info?.description}" />
+    <title>${ctx.document?.info?.title}</title>
     <!-- Embed elements Elements via Web Component -->
     <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css">

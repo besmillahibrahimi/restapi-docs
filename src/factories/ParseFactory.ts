@@ -1,11 +1,12 @@
 import { OpenAPIV3_1 } from "openapi-types";
-import { DocumentFactory } from "../core/OpenAPIApp";
 import { ParseOption, ParseSchema, QueriesResult } from "../types/parse.types";
-import fetch from "node-fetch";
 import ParseOpenApi from "./parse-openapi";
+import { DocumentFactory } from "../types/types";
 
-export default class ParseFactory implements DocumentFactory {
-  constructor(public option: ParseOption) {}
+export default class ParseFactory extends DocumentFactory {
+  constructor(public option: ParseOption, info?: OpenAPIV3_1.InfoObject) {
+    super(info);
+  }
   async buildDocument(): Promise<OpenAPIV3_1.Document> {
     const res = (await fetch(`${this.option.serverUrl}/schemas`, {
       headers: {

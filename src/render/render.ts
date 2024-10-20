@@ -1,13 +1,5 @@
-import { OpenAPIContext } from "../core/OpenAPIApp";
+import { OpenAPIContext, OpenAPIRenderer, Renderer } from "../types/types";
 import ScalarRenderer from "./ScalarRenderer";
-
-export interface Renderer {
-  render(context: OpenAPIContext): string;
-}
-
-export abstract class OpenAPIRenderer implements Renderer {
-  abstract render(context: OpenAPIContext): string;
-}
 
 export class RendererContext {
   renderer: Renderer;

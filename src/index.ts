@@ -1,43 +1,30 @@
 import express, { Response } from "express";
-import schemas from "../test/schemas.js";
-
-import ParseOpenApi from "./factories/parse-openapi.js";
-import { createHTML } from "./openapi.util";
-import { OpenAPIApp } from "./core/OpenAPIApp.js";
-import ParseFactory from "./factories/ParseFactory.js";
-import { Providers } from "./types/types.js";
+import { OpenAPIApp } from "./core/OpenAPIApp";
+import ParseFactory from "./factories/ParseFactory";
+import { Providers } from "./types/types";
 
 const app = express();
 
-const openApiApp = new OpenAPIApp({
-  document: new ParseFactory().buildDocument(),
-  specUrl: "http://localhost:5000/docs-json",
+let openApiApp: OpenAPIApp;
+
+app.get("/docs/json", (req, res, next) => {
+  res.send(openApiApp?.getDocument());
+});
+app.get("/docs", (req, res: Response, next) => {
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res
+    .status(200)
+    .send(openApiApp?.render({ provider: req.query.provider as Providers }));
 });
 
-app.use("docs-json", (req, res, next) => {
-  res.send(openApiApp.getDocument());
+app.listen(5000, async () => {
+  openApiApp = new OpenAPIApp({
+    document: await new ParseFactory({
+      appId: "parse-server.lm4c.com/parse-server",
+      masterKey: "eqLa6fJ0RiRsxFGub15COutTacoLc74/2X6PueOiHsk",
+      serverUrl: "https://parse-server.lm4c.com/parse",
+    }).buildDocument(),
+    specUrl: "http://localhost:5000/docs-json",
+  });
+  console.log(`openapi docs is running at port 5000`);
 });
-app.use("docs-new", (req, res: Response, next) => {
-  res.setHeader("Content-Type", "text/html");
-  res.status(200).send(openApiApp.render());
-});
-
-const api = new ParseOpenApi();
-const obj = schemas[0];
-
-app.get("/docs/json", async (_, res) => {
-  const schemas = await fetch("https://parse-server.lm4c.com/parse/schemas", {
-    headers: {
-      "X-Parse-Application-Id": "node-parse-server",
-      "X-Parse-Master-Key": "node-parse-server",
-    },
-  }).then((r) => r.json());
-  const json = api.createOpenApiSpec(obj as any);
-  res.json(json);
-});
-app.get("/docs", (req, res) => {
-  const provider = (req.query.provider as Providers) ?? "scalar";
-
-  res.send(createHTML(provider));
-});
-app.listen(5000, () => console.log(`openapi docs is running at port 5000`));

@@ -1,11 +1,7 @@
 import { OpenAPIV3_1 } from "openapi-types";
-import {
-  buildOpenAPIQueryResult,
-  fakeExample,
-  mergeObject,
-} from "../openapi.util";
+import { buildOpenAPIQueryResult, mergeObject } from "../openapi.util";
 import { ParseOption, ParseSchema } from "../types/parse.types";
-import { DefualtDocData } from "../core/OpenAPIApp";
+import { DefualtDocData } from "../types/types";
 
 const typeMapping: Record<
   string,
@@ -31,7 +27,7 @@ export default class ParseOpenApi {
     options: ParseOption
   ): OpenAPIV3_1.Document {
     const document: OpenAPIV3_1.Document = {
-      ...mergeObject(DefualtDocData, options.doc),
+      ...mergeObject(DefualtDocData.doc, options.doc),
       tags: schemas.map<OpenAPIV3_1.TagObject>((s) => ({ name: s.className })),
       components: {
         schemas: schemas.reduce((pre, cur, index) => {
@@ -187,13 +183,6 @@ export default class ParseOpenApi {
               playerName: "Sean Plott",
             },
           },
-          ...schemas.reduce<Record<string, OpenAPIV3_1.ExampleObject>>(
-            (pre, cur) => ({
-              ...pre,
-              [cur.className]: { value: fakeExample(cur) },
-            }),
-            {}
-          ),
         },
       },
       paths: schemas.reduce((pre, cur, index) => {

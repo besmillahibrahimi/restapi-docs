@@ -1,6 +1,5 @@
-import { OpenAPIContext } from "../core/OpenAPIApp";
 import { objectToAttr } from "../openapi.util";
-import { OpenAPIRenderer } from "./render";
+import { OpenAPIContext, OpenAPIRenderer } from "../types/types";
 
 export default class RapidocRenderer extends OpenAPIRenderer {
   render(context: OpenAPIContext): string {
@@ -11,9 +10,9 @@ export default class RapidocRenderer extends OpenAPIRenderer {
           <meta charset="utf-8"> <!-- Important: rapi-doc uses utf8 characters -->
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="description" content="${
-            context.document?.info.description
+            context.document?.info?.description
           }" />
-          <title>${context.document?.info.title}</title>
+          <title>${context.document?.info?.title}</title>
           <script type="module" src="https://unpkg.com/rapidoc/dist/rapidoc-min.js"></script>
         </head>
         <body>
