@@ -1,5 +1,11 @@
 import { OpenAPIV3 } from "openapi-types";
 import { ParseSchema } from "./types/parse.types";
+import { Providers, Renderer } from "./types/types";
+import ScalarRenderer from "./render/ScalarRenderer";
+import SwaggerRenderer from "./render/SwaggerRenderer";
+import StoplightioRenderer from "./render/StoplightioRenderer";
+import RedocRenderer from "./render/RedocRenderer";
+import RapidocRenderer from "./render/RapidocRenderer";
 
 export function buildOpenAPIQueryResult(
   schema: ParseSchema
@@ -38,7 +44,20 @@ function merge(src: any = {}, obj: any) {
 
 export function mergeObject(obj1: any, obj2: any): any {
   let obj = {};
-  merge(obj, obj1);
-  merge(obj, obj2);
+
+  obj1 && merge(obj, obj1);
+  obj2 && merge(obj, obj2);
   return obj;
+}
+
+export function selectRenderer(provider: Providers): Renderer {
+  return provider === "rapidoc"
+    ? new RapidocRenderer()
+    : provider === "redoc"
+    ? new RedocRenderer()
+    : provider === "stoplightio"
+    ? new StoplightioRenderer()
+    : provider === "swagger"
+    ? new SwaggerRenderer()
+    : new ScalarRenderer(); // scalar is the defualt renderer
 }

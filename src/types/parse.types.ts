@@ -1,6 +1,6 @@
-import { AppOption } from "./types";
+import { BasicDocInfo } from "./types";
 
-export type ParseOption = AppOption & {
+export type ParseOption = {
   appId: string;
   masterKey: string;
   serverUrl: string;

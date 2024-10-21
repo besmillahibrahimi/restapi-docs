@@ -10,9 +10,9 @@ export default class RapidocRenderer extends OpenAPIRenderer {
           <meta charset="utf-8"> <!-- Important: rapi-doc uses utf8 characters -->
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="description" content="${
-            context.document?.info?.description
+            context.basicInfo?.info?.description
           }" />
-          <title>${context.document?.info?.title}</title>
+          <title>${context.basicInfo?.info?.title}</title>
           <script type="module" src="https://unpkg.com/rapidoc/dist/rapidoc-min.js"></script>
         </head>
         <body>

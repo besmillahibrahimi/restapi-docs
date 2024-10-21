@@ -7,8 +7,8 @@ export default class SwaggerRenderer extends OpenAPIRenderer {
           <head>
             <meta charset="utf-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <meta name="description" content="${ctx.document?.info?.description}" />
-            <title>${ctx.document?.info?.title}</title>
+            <meta name="description" content="${ctx.basicInfo?.info?.description}" />
+            <title>${ctx.basicInfo?.info?.title}</title>
             <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css" />
           </head>
           <body>

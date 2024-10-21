@@ -6,39 +6,48 @@ import ScalarRenderer from "../render/ScalarRenderer";
 import StoplightioRenderer from "../render/StoplightioRenderer";
 import SwaggerRenderer from "../render/SwaggerRenderer";
 import {
+  DocumentFactory,
   OpenAPIContext,
   OpenAPIRenderer,
   ProviderOption,
-  Providers,
+  Renderer,
 } from "../types/types";
+import { selectRenderer } from "../openapi.util";
 
 export class OpenAPIApp {
-  private context: OpenAPIContext;
-  private rendererContext: RendererContext;
+  private readonly context: OpenAPIContext;
+  private readonly rendererContext: RendererContext;
+  private factory: DocumentFactory;
 
-  constructor(context: OpenAPIContext, renderer?: OpenAPIRenderer) {
-    this.context = context;
+  constructor(factory: DocumentFactory, renderer?: Renderer) {
+    this.context = { basicInfo: factory.basicInfo };
     this.rendererContext = new RendererContext(renderer);
+    this.factory = factory;
+    if (this.factory.specUrl) this.setSpecUrl(this.factory.specUrl);
   }
 
-  getDocument(): OpenAPIV3_1.Document | string | undefined {
-    return this.context.document;
+  setFactory(factory: DocumentFactory) {
+    this.factory = factory;
+  }
+
+  setSpecUrl(specUrl: string) {
+    this.context.specUrl = specUrl;
+  }
+  getSpecUrl(): string | undefined {
+    return this.context.specUrl;
+  }
+  setProviderOptions(options: any) {
+    this.context.providerOptions = options;
+  }
+
+  getDocument(): OpenAPIV3_1.Document | undefined {
+    return this.factory.document;
   }
 
   render(options?: ProviderOption): string {
     let { provider, ...providerOptions } = options ?? {};
     if (provider) {
-      this.rendererContext.setRenderer(
-        provider === "rapidoc"
-          ? new RapidocRenderer()
-          : provider === "redoc"
-          ? new RedocRenderer()
-          : provider === "stoplightio"
-          ? new StoplightioRenderer()
-          : provider === "swagger"
-          ? new SwaggerRenderer()
-          : new ScalarRenderer() // scalar is the defualt renderer
-      );
+      this.setRenderer(selectRenderer(provider));
     }
     if (providerOptions) {
       this.context.providerOptions = providerOptions;

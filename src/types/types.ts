@@ -7,39 +7,48 @@ export type Providers =
   | "rapidoc"
   | "stoplightio";
 
-export type AppOption = {
-  doc?: {
-    openapi?: string;
-    info?: OpenAPIV3_1.InfoObject;
-    externalDocs?: OpenAPIV3_1.ExternalDocumentationObject;
-    servers?: OpenAPIV3_1.ServerObject[];
-  };
+export type BasicDocInfo = {
+  openapi?: string;
+  info?: OpenAPIV3_1.InfoObject;
+  externalDocs?: OpenAPIV3_1.ExternalDocumentationObject;
+  servers?: OpenAPIV3_1.ServerObject[];
 };
 
-export const DefualtDocData: AppOption = {
-  doc: {
-    openapi: "3.1.0",
-    info: {
-      title: "App Docs",
-      version: "1.0.0",
-    },
+export const DefualtDocData: BasicDocInfo = {
+  openapi: "3.1.0",
+  info: {
+    title: "App Docs",
+    version: "1.0.0",
   },
 };
 
 export interface OpenAPIContext {
-  document?: OpenAPIV3_1.Document;
+  basicInfo?: BasicDocInfo;
   specUrl?: string;
   providerOptions?: any;
 }
 
 export interface BaseDocument {
+  /**
+   * This method builds {@link OpenAPIV3_1.Document}. It must be implemented in any {@link DocumentFactory} subclasses.
+   * @returns {@link OpenAPIV3_1.Document}
+   */
   buildDocument(): Promise<OpenAPIV3_1.Document | undefined>;
 }
 
 export abstract class DocumentFactory implements BaseDocument {
-  document?: OpenAPIV3_1.Document | string; // this is either the [OpenAPI.Document] object or a url a document json object
-  constructor(info?: OpenAPIV3_1.InfoObject) {
-    this.init();
+  /**
+   * The {@link OpenAPIV3_1.Document} object
+   */
+  document?: OpenAPIV3_1.Document;
+  specUrl?: string;
+  constructor(
+    public basicInfo?: BasicDocInfo,
+    spec?: OpenAPIV3_1.Document | string
+  ) {
+    if (typeof spec === "string") this.specUrl = spec;
+    else this.document = spec;
+    // this.init();
   }
   protected async init() {
     this.document = await this.buildDocument();

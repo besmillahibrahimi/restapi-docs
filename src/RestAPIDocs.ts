@@ -1,30 +1,49 @@
 import { OpenAPIApp } from "./core/OpenAPIApp";
-import { DocumentFactory, ProviderOption, Providers } from "./types/types";
+import { selectRenderer } from "./openapi.util";
+import {
+  DocumentFactory,
+  ProviderOption,
+  Providers,
+  Renderer,
+} from "./types/types";
 import express, { Response } from "express";
 
 export class RestAPIDocs {
-  private app: OpenAPIApp;
-  constructor(public factory: DocumentFactory) {
-    this.app = new OpenAPIApp({
-      document: factory.document,
-      specUrl: factory.document,
-    });
+  private readonly app: OpenAPIApp;
+
+  constructor(
+    factory: DocumentFactory,
+    public path: string = "/_docs",
+    renderer?: Renderer | Providers
+  ) {
+    this.app = new OpenAPIApp(
+      factory,
+      typeof renderer === "string" ? selectRenderer(renderer) : renderer
+    );
   }
 
   getSpec() {
-    return this.factory.buildDocument();
+    return this.app.getDocument();
+  }
+  getSpecUrl() {
+    return this.app.getSpecUrl();
   }
   render(options: ProviderOption) {
     return this.app?.render(options);
   }
   listen(port: number = 8080) {
     const app = express();
-    app.get("/docs/json", async (req, res, next) => {
+
+    this.app.setSpecUrl(
+      this.app.getSpecUrl() ?? `http://localhost:${port}${this.path}/json`
+    );
+
+    app.get(`${this.path}/json`, async (req, res, next) => {
       const doc = this.getSpec();
-      if (typeof doc === "string") res.redirect(doc);
-      else res.send(doc);
+      if (!doc) res.redirect(this.app.getSpecUrl()!);
+      else res.status(200).json(doc);
     });
-    app.get("/docs", (req, res: Response, next) => {
+    app.get(this.path, (req, res: Response, next) => {
       res.setHeader("Content-Type", "text/html; charset=utf-8");
       res
         .status(200)

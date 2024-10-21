@@ -1,7 +1,7 @@
 import { OpenAPIV3_1 } from "openapi-types";
 import { buildOpenAPIQueryResult, mergeObject } from "../openapi.util";
 import { ParseOption, ParseSchema } from "../types/parse.types";
-import { DefualtDocData } from "../types/types";
+import { BasicDocInfo, DefualtDocData } from "../types/types";
 
 const typeMapping: Record<
   string,
@@ -24,10 +24,10 @@ interface IProperties {
 export default class ParseOpenApi {
   createOpenApiSpec(
     schemas: ParseSchema[],
-    options: ParseOption
+    basicInfo?: BasicDocInfo
   ): OpenAPIV3_1.Document {
     const document: OpenAPIV3_1.Document = {
-      ...mergeObject(DefualtDocData.doc, options.doc),
+      ...mergeObject(DefualtDocData, basicInfo),
       tags: schemas.map<OpenAPIV3_1.TagObject>((s) => ({ name: s.className })),
       components: {
         schemas: schemas.reduce((pre, cur, index) => {
