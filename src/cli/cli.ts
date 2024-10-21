@@ -115,10 +115,7 @@ yargs(hideBin(process.argv))
     type: "string",
     describe: "The summary for OpenAPI docs.",
   })
-  .option("desc", {
-    type: "string",
-    describe: "The description for OpenAPI docs.",
-  })
+
   .option("port", {
     alias: "p",
     type: "number",

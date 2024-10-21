@@ -1,6 +1,6 @@
 {
   "name": "restapi-docs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This package generate openapi specifications and render using a provider like swagger, scaler, and more.",
   "main": "dist/src/clic/cli.js",
   "types": "dist/index.d.ts",
