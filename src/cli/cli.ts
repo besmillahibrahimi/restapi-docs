@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
+import { readFileSync } from "fs";
+import { OpenAPIV3_1 } from "openapi-types";
 import { hideBin } from "yargs/helpers";
 import yargs from "yargs/yargs";
 import OpenAPISpecFactory from "../factories/OpenAPISpecFactory";
 import ParseFactory from "../factories/ParseFactory";
 import { RestAPIDocs } from "../RestAPIDocs";
 import { DocumentFactory } from "../types/types";
-import { OpenAPIV3_1 } from "openapi-types";
-import { readFile, readFileSync } from "fs";
+import { parse as yamlParse } from "yaml";
 
 const startApp = (factory: DocumentFactory, arg: any) => {
   const { renderer, r, port, path, ...providerOptions } = arg;
@@ -44,10 +45,18 @@ function handleOpenAPI(args: any) {
     desc: description,
     ...other
   } = args;
+
   let spec: string | OpenAPIV3_1.Document;
   if (specUrl) spec = specUrl;
   else if (specFile) {
-    spec = JSON.parse(readFileSync(specFile, "utf-8"));
+    const extension = specFile.split(".").pop()?.toLowerCase();
+    // First, try to determine by file extension (optional step)
+    if (extension === "json") {
+      spec = JSON.parse(readFileSync(specFile, "utf-8"));
+    } else if (extension === "yaml" || extension === "yml") {
+      spec = yamlParse(readFileSync(specFile, "utf-8"));
+      console.log(JSON.stringify(spec, null, 2));
+    } else throw new Error("The specification file type is not supported.");
   } else throw new Error("No specification source provided.");
   startApp(
     new OpenAPISpecFactory(spec, {
@@ -99,7 +108,8 @@ yargs(hideBin(process.argv))
         })
         .option("specFile", {
           type: "string",
-          describe: "Path to an OpenAPI Specification file",
+          describe:
+            "Path to an OpenAPI Specification file. Notice that only JSON, and YAML fiel supported",
         })
         .help();
     },

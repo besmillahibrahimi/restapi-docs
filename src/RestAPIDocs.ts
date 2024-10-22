@@ -7,7 +7,8 @@ import {
   Renderer,
 } from "./types/types";
 import express, { Response } from "express";
-
+import { exec } from "child_process";
+import createForm from "./forms/Forms";
 export class RestAPIDocs {
   private readonly app: OpenAPIApp;
 
@@ -37,7 +38,7 @@ export class RestAPIDocs {
     this.app.setSpecUrl(
       this.app.getSpecUrl() ?? `http://localhost:${port}${this.path}/json`
     );
-
+    app.get(`${this.path}/forms`, createForm(this.getSpecUrl()!));
     app.get(`${this.path}/json`, async (req, res, next) => {
       const doc = this.getSpec();
       if (!doc) res.redirect(this.app.getSpecUrl()!);
@@ -50,8 +51,25 @@ export class RestAPIDocs {
         .send(this.app?.render({ provider: req.query.provider as Providers }));
     });
     app.listen(port, () => {
+      const openBrowser = (url: string) => {
+        const startCommand =
+          process.platform === "win32"
+            ? "start"
+            : process.platform === "darwin"
+            ? "open"
+            : "xdg-open";
+
+        exec(`${startCommand} ${url}`, (err) => {
+          if (err) {
+            console.error(`Error opening browser: ${err.message}`);
+          }
+        });
+      };
+
+      const url = `http://localhost:${port}${this.path}`;
+      openBrowser(url);
       console.log(
-        "See your OpenAPI Specification with beautiful rendering provider at port",
+        `See your OpenAPI Specification with beautiful rendering provider at ${url}`,
         port
       );
     });

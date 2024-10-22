@@ -1,10 +1,6 @@
 import { OpenAPIV3_1 } from "openapi-types";
-import RapidocRenderer from "../render/RapidocRenderer";
-import RedocRenderer from "../render/RedocRenderer";
+import { selectRenderer } from "../openapi.util";
 import { RendererContext } from "../render/render";
-import ScalarRenderer from "../render/ScalarRenderer";
-import StoplightioRenderer from "../render/StoplightioRenderer";
-import SwaggerRenderer from "../render/SwaggerRenderer";
 import {
   DocumentFactory,
   OpenAPIContext,
@@ -12,7 +8,6 @@ import {
   ProviderOption,
   Renderer,
 } from "../types/types";
-import { selectRenderer } from "../openapi.util";
 
 export class OpenAPIApp {
   private readonly context: OpenAPIContext;
@@ -20,7 +15,10 @@ export class OpenAPIApp {
   private factory: DocumentFactory;
 
   constructor(factory: DocumentFactory, renderer?: Renderer) {
-    this.context = { basicInfo: factory.basicInfo };
+    this.context = {
+      basicInfo: factory.basicInfo,
+      document: factory.document,
+    };
     this.rendererContext = new RendererContext(renderer);
     this.factory = factory;
     if (this.factory.specUrl) this.setSpecUrl(this.factory.specUrl);

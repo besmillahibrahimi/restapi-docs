@@ -24,6 +24,7 @@ export const DefualtDocData: BasicDocInfo = {
 
 export interface OpenAPIContext {
   basicInfo?: BasicDocInfo;
+  document?: OpenAPIV3_1.Document;
   specUrl?: string;
   providerOptions?: any;
 }

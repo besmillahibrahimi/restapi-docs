@@ -8,8 +8,20 @@ export default class ScalarRenderer extends OpenAPIRenderer {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="${ctx.basicInfo?.info?.description}" />
-    <title>${ctx.basicInfo?.info?.title}</title>
+    ${
+      ctx.basicInfo?.info?.description ?? ctx.document?.info?.description
+        ? `<meta name="description" content="${
+            ctx.basicInfo?.info?.description ?? ctx.document?.info?.description
+          }" />`
+        : ""
+    }
+    ${
+      ctx.basicInfo?.info?.title ?? ctx.document?.info?.title
+        ? `<title>${
+            ctx.basicInfo?.info?.title ?? ctx.document?.info?.title
+          }</title>`
+        : ""
+    }
     <style>
       body {
         margin: 0;
