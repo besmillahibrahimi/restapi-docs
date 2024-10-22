@@ -4,10 +4,13 @@ import { Form } from "./form.util";
 
 export default function createForm(specUrl: string) {
   return async (req: Request, res: Response) => {
-    const spec = (await fetch(specUrl).then((r) =>
-      r.json()
-    )) as OpenAPIV3_1.Document;
-
+    let spec: OpenAPIV3_1.Document | null = null;
+    try {
+      spec = (await fetch(specUrl).then((r) => r.json())) as OpenAPIV3_1.Document;
+      console.log("spec", spec);
+    } catch (error) {
+      console.log("error", error);
+    }
     const html = `
             <!doctype html>
     <html>
@@ -20,7 +23,7 @@ export default function createForm(specUrl: string) {
         <main class="container mx-auto flex">
             <div class="px-16 border-r border-r-gray-700 ">
                 <ul>
-                ${Object.entries(spec.components?.schemas ?? {})
+                ${Object.entries(spec?.components?.schemas ?? {})
                   .map(
                     ([key, value]) => `
                   <li class="py-1 px-2 hover:bg-gray-100 rounded">
@@ -34,7 +37,7 @@ export default function createForm(specUrl: string) {
             </div>
 
             <div class="flex-grow h-screen overflow-y-auto">
-            ${Object.entries(spec.components?.schemas ?? {})
+            ${Object.entries(spec?.components?.schemas ?? {})
               .map(
                 ([name, props]) =>
                   `
@@ -51,6 +54,7 @@ export default function createForm(specUrl: string) {
             
             </div>
         </main>
+          <script src="https://cdn.jsdelivr.net/npm/@tinymce/tinymce-webcomponent@1/dist/tinymce-webcomponent.min.js"></script>
     </body>
     </html>
             `;
